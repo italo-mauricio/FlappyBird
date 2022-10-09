@@ -15,6 +15,7 @@ class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
                        pygame.image.load('bluebird-downflap.png').convert_alpha(),
                        ]
         
+        self.speed = SPEED
         self.current_image = 0
         
         self.image = pygame.image.load('bluebird-upflap.png').convert_alpha()  # convert_alpha vai ignorar o pixels que se sobressaem na imagem
@@ -29,6 +30,13 @@ class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
         self.current_image = (self.current_image + 1) % 3
         self.image = self.images [ self.current_image ]
         
+        
+        # -----------------------------
+        self.rect[1] += SPEED  # faz o pássaro cair
+        # -----------------------------
+    
+    def bump(self):
+        self.rect[1] -= 200
     
     
     
@@ -51,6 +59,11 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             
+        if event.type == KEYDOWN:
+            if event.key == K_SPACE:   # usa o espaço para fazer ele subir
+                bird.bump()
+                
+                
     tela.blit(BACKGROUND, (0, 0))
     
     bird_group.update()

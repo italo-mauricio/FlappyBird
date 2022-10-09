@@ -9,11 +9,14 @@ GRAVITY = 1
 GAME_SPEED = 10
 GROUND_WIDTH = 2 * SCREEN_WIDTH
 GROUND_HEIGHT = 100
+
+
+
 class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
     
     def __init__(self): # init padrão da OO
-        pygame.sprite.Sprite.__init__(self)
         
+        pygame.sprite.Sprite.__init__(self)
         self.images = [pygame.image.load('bluebird-upflap.png').convert_alpha(),
                        pygame.image.load('bluebird-midflap.png').convert_alpha(),
                        pygame.image.load('bluebird-downflap.png').convert_alpha(),
@@ -21,22 +24,16 @@ class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
         
         self.speed = SPEED
         self.current_image = 0
-        
         self.image = pygame.image.load('bluebird-upflap.png').convert_alpha()  # convert_alpha vai ignorar o pixels que se sobressaem na imagem
-
         self.rect = self.image.get_rect()
         self.rect[0] = SCREEN_WIDTH / 2                                         # colocando o pássaro no meio da tela
         self.rect[1] = SCREEN_HEIGHT / 2
         
-         
     def update(self):
         
         self.current_image = (self.current_image + 1) % 3
         self.image = self.images [ self.current_image ]
-        
         self.speed += GRAVITY
-        
-        
         # -----------------------------
         self.rect[1] += self.speed  # faz o pássaro cair
         # -----------------------------
@@ -49,7 +46,6 @@ class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
 class Ground(pygame.sprite.Sprite):
     def __init__(self, xposition):
         pygame.sprite.Sprite.__init__(self)
-        
         self.image = pygame.image.load('base.png')
         self.image = pygame.transform.scale(self.image, (GROUND_WIDTH, GROUND_HEIGHT))
         self.rect = self.image.get_rect()
@@ -65,8 +61,7 @@ def off_screen(sprite):
     
     
     
-    
-    
+
     
 pygame.init()
 
@@ -107,9 +102,6 @@ while True:
     
     bird_group.update()
     ground_group.update()
-    
     bird_group.draw(tela)
     ground_group.draw(tela)
-    
-    
     pygame.display.update()

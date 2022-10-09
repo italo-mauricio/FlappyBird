@@ -51,7 +51,7 @@ class Pipe(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         
         self.image = pygame.image.load('pipe-red.png').convert_alpha()
-        self.image = pygame.transform.scale(self.image, (PIPE_WIDTH,PIPE_WIDTH))
+        self.image = pygame.transform.scale(self.image, (PIPE_WIDTH,PIPE_HEIGHT))
         
         self.rect = self.image.get_rect()
         self.rect[0] = xposition
@@ -123,6 +123,8 @@ for i in range(2):
 pipe_group = pygame.sprite.Group()
 for i in range(2):
     pipes = get_random_pipes(SCREEN_WIDTH * i + 800)
+    pipe_group.add(pipes[0])
+    pipe_group.add(pipes[1])
     
 
 
@@ -148,9 +150,11 @@ while True:
         ground_group.add(new_ground)
     
     bird_group.update()
+    pipe_group.update()
     ground_group.update()
     bird_group.draw(tela)
     ground_group.draw(tela)
+    pipe_group.draw(tela)
     
     if pygame.sprite.groupcollide(bird_group, ground_group, False, False, pygame.sprite.collide_mask):
         input()

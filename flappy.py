@@ -4,6 +4,7 @@ from pygame.locals import *
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 700
 SPEED = 10
+GRAVITY = 1
 
 class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
     
@@ -30,13 +31,28 @@ class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
         self.current_image = (self.current_image + 1) % 3
         self.image = self.images [ self.current_image ]
         
+        self.speed += GRAVITY
+        
         
         # -----------------------------
-        self.rect[1] += SPEED  # faz o pássaro cair
+        self.rect[1] += self.speed  # faz o pássaro cair
         # -----------------------------
     
     def bump(self):
-        self.rect[1] -= 200
+        self.speed = -SPEED
+    
+    
+    
+class Ground(pygame.sprite.Sprite):
+    def __init__(self, width):
+        
+        self.image = pygame.image.load('base.png')
+    
+    
+    
+    
+    
+    
     
     
     

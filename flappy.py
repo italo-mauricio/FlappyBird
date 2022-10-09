@@ -1,3 +1,4 @@
+from turtle import Screen
 import pygame
 from pygame.locals import *
 
@@ -6,6 +7,8 @@ SCREEN_HEIGHT = 700
 SPEED = 10
 GRAVITY = 1
 GAME_SPEED = 10
+GROUND_WIDTH = 2 * SCREEN_WIDTH
+GROUND_HEIGHT = 100
 class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
     
     def __init__(self): # init padrão da OO
@@ -44,17 +47,20 @@ class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
     
     
 class Ground(pygame.sprite.Sprite):
-    def __init__(self, width, height):
+    def __init__(self, xposition):
         pygame.sprite.Sprite.__init__(self)
         
         self.image = pygame.image.load('base.png')
-        self.image = pygame.transform.scale(self.image, (width, height))
+        self.image = pygame.transform.scale(self.image, (GROUND_WIDTH, GROUND_HEIGHT))
         self.rect = self.image.get_rect()
+        self.rect[0] = xposition
+        self.rect[1] = SCREEN_HEIGHT - GROUND_HEIGHT
     
     def update(self):
         self.rect[0] -= GAME_SPEED
     
-    
+def off_screen(sprite):
+    return sprite.rect[0] < - (sprite.rect[2])
     
     
     
@@ -73,8 +79,10 @@ bird_group = pygame.sprite.Group()
 bird = Bird()
 bird_group.add(bird)
 ground_group = pygame.sprite.Group()
-ground = Ground(SCREEN_WIDTH, 100)
-ground_group.add(ground)
+
+for i in range(2):
+    ground = Ground(GROUND_WIDTH * i)
+    ground_group.add(ground)
 
 clock = pygame.time.Clock()
 
@@ -90,6 +98,12 @@ while True:
                 
                 
     tela.blit(BACKGROUND, (0, 0))
+    
+    if off_screen(ground_group.sprites()[0]):
+        ground_group.remove(ground_group.sprites()[0])
+        
+        new_ground = Ground(GROUND_WIDTH)
+        ground_group.add(new_ground)
     
     bird_group.update()
     ground_group.update()

@@ -148,6 +148,15 @@ while True:
         
         new_ground = Ground(GROUND_WIDTH - 20)
         ground_group.add(new_ground)
+        
+    if off_screen(pipe_group.sprites()[0]):
+        pipe_group.remove(pipe_group.sprites()[0])
+        pipe_group.remove(pipe_group.sprites()[0])
+        
+        pipes = get_random_pipes(SCREEN_WIDTH*2)
+        
+        pipe_group.add(pipes[0])
+        pipe_group.add(pipes[1])
     
     bird_group.update()
     pipe_group.update()
@@ -156,7 +165,8 @@ while True:
     ground_group.draw(tela)
     pipe_group.draw(tela)
     
-    if pygame.sprite.groupcollide(bird_group, ground_group, False, False, pygame.sprite.collide_mask):
+    if (pygame.sprite.groupcollide(bird_group, ground_group, False, False, pygame.sprite.collide_mask) or
+        pygame.sprite.groupcollide(bird_group, pipe_group, False, False, pygame.sprite.collide_mask)) :
         input()
         break
         # Game Over

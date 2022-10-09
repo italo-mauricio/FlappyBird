@@ -5,7 +5,7 @@ SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 700
 SPEED = 10
 GRAVITY = 1
-
+GAME_SPEED = 10
 class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
     
     def __init__(self): # init padrão da OO
@@ -44,9 +44,15 @@ class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
     
     
 class Ground(pygame.sprite.Sprite):
-    def __init__(self, width):
+    def __init__(self, width, height):
+        pygame.sprite.Sprite.__init__(self)
         
         self.image = pygame.image.load('base.png')
+        self.image = pygame.transform.scale(self.image, (width, height))
+        self.rect = self.image.get_rect()
+    
+    def update(self):
+        self.rect[0] -= GAME_SPEED
     
     
     
@@ -66,6 +72,9 @@ BACKGROUND = pygame.transform.scale(BACKGROUND, (SCREEN_WIDTH, SCREEN_HEIGHT))  
 bird_group = pygame.sprite.Group()
 bird = Bird()
 bird_group.add(bird)
+ground_group = pygame.sprite.Group()
+ground = Ground(SCREEN_WIDTH, 100)
+ground_group.add(ground)
 
 clock = pygame.time.Clock()
 
@@ -83,8 +92,10 @@ while True:
     tela.blit(BACKGROUND, (0, 0))
     
     bird_group.update()
+    ground_group.update()
     
     bird_group.draw(tela)
+    ground_group.draw(tela)
     
     
     pygame.display.update()

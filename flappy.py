@@ -1,6 +1,8 @@
 from turtle import Screen
-import pygame
+import pygame, random
 from pygame.locals import *
+
+# Constantes
 
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 700
@@ -9,7 +11,9 @@ GRAVITY = 1
 GAME_SPEED = 10
 GROUND_WIDTH = 2 * SCREEN_WIDTH
 GROUND_HEIGHT = 100
-
+PIPE_WIDTH = 120
+PIPE_HEIGHT = 500
+PIPE_GAP = 200
 
 
 class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
@@ -28,6 +32,7 @@ class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
         self.rect = self.image.get_rect()
         self.rect[0] = SCREEN_WIDTH / 2                                         # colocando o pássaro no meio da tela
         self.rect[1] = SCREEN_HEIGHT / 2
+        self.mask = pygame.mask.from_surface(self.image)
         
     def update(self):
         
@@ -41,16 +46,46 @@ class Bird(pygame.sprite.Sprite): # Definindo a classe do pássaro
     def bump(self):
         self.speed = -SPEED
     
-    
+class Pipe(pygame.sprite.Sprite):
+    def __init__(self, inverted, xposition, ysize):
+        pygame.sprite.Sprite.__init__(self)
+        
+        self.image = pygame.image.load('pipe-red.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (PIPE_WIDTH,PIPE_WIDTH))
+        
+        self.rect = self.image.get_rect()
+        self.rect[0] = xposition
+        
+        if inverted:
+            self.image = pygame.transform.flip(self.image, False, True)
+            self.rect[1] = - (self.rect[3] - ysize)
+        else:
+            self.rect[1] = SCREEN_HEIGHT - ysize
+            
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def update(self):
+        self.rect[0] -= GAME_SPEED
+        
+        
+        
+
+
+
+
+
+
+
     
 class Ground(pygame.sprite.Sprite):
     def __init__(self, xposition):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('base.png')
+        self.image = pygame.image.load('base.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (GROUND_WIDTH, GROUND_HEIGHT))
         self.rect = self.image.get_rect()
         self.rect[0] = xposition
         self.rect[1] = SCREEN_HEIGHT - GROUND_HEIGHT
+        self.mask = pygame.mask.from_surface(self.image)
     
     def update(self):
         self.rect[0] -= GAME_SPEED
@@ -59,6 +94,11 @@ def off_screen(sprite):
     return sprite.rect[0] < - (sprite.rect[2])
     
     
+def get_random_pipes(xposition):
+    size = random.randint(100, 300)
+    pipe = Pipe(False, xposition, size)
+    pipe_inverted = Pipe(True, xposition, SCREEN_HEIGHT - size - PIPE_GAP)    
+    return (pipe, pipe_inverted)
     
     
 
@@ -78,6 +118,13 @@ ground_group = pygame.sprite.Group()
 for i in range(2):
     ground = Ground(GROUND_WIDTH * i)
     ground_group.add(ground)
+    
+    
+pipe_group = pygame.sprite.Group()
+for i in range(2):
+    pipes = get_random_pipes(SCREEN_WIDTH * i + 800)
+    
+
 
 clock = pygame.time.Clock()
 
@@ -104,4 +151,11 @@ while True:
     ground_group.update()
     bird_group.draw(tela)
     ground_group.draw(tela)
+    
+    if pygame.sprite.groupcollide(bird_group, ground_group, False, False, pygame.sprite.collide_mask):
+        input()
+        break
+        # Game Over
+    
+    
     pygame.display.update()
